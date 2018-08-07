@@ -54,11 +54,15 @@ async def stats(ctx, steam_id):
         for row in rows:
             total_rounds = row["rounds_tr"] + row["rounds_ct"]
             kdr = Decimal(row["kills"] / row["deaths"])
-            hit_percentage = row["shots"]%row["hits"]/100
-            headshot_percentage = row["kills"]%row["headshots"]
+            hit_percentage_clac = row["hits"]/row["shots"]
+            hit_percentage = Decimal(hit_percentage_clac*100)
+            headshot_percentage_clac = row["headshots"]/row["kills"]
+            headshot_percentage = Decimal(headshot_percentage_clac*100)
             kdr_roundup = round(kdr,2)
+            headshot_roundup = round(headshot_percentage,2)
+            hit_roundup = round(hit_percentage,2)
 
-            embed = discord.Embed(title="**Rankme statistics for {}**".format(row["name"]), colour=discord.Colour(embed_color), description="\n**Score:** {}\n**KDR:** {}\n**Hits Percentage:** {}%\n**Headshot Percentage:** {}%\n**Kills:** {}\n**Deaths:** {}\n**Shots:** {}\n**Hits:** {}\n**Total Rounds Played:** {}".format(row["score"],kdr_roundup,hit_percentage,headshot_percentage,row["kills"],row["deaths"],row["shots"],row["hits"],total_rounds))
+            embed = discord.Embed(title="**Rankme statistics for {}**".format(row["name"]), colour=discord.Colour(embed_color), description="\n**Score:** {}\n**KDR:** {}\n**Hits Percentage:** {}%\n**Headshot Percentage:** {}%\n**Kills:** {}\n**Deaths:** {}\n**Shots:** {}\n**Hits:** {}\n**Total Rounds Played:** {}".format(row["score"],kdr_roundup,hit_roundup,headshot_roundup,row["kills"],row["deaths"],row["shots"],row["hits"],total_rounds))
             await bot.say(embed=embed)
     except:
         embed = discord.Embed(colour=discord.Colour(embed_color), description="**Please input a invalid Steam ID!**")
