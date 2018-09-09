@@ -47,7 +47,7 @@ async def stats(ctx, steam_id):
 
         steam_replace = steam_replace[:7].replace('0', '1') + steam_replace[7:]
 
-        sqlQuery = "select * from {} where steam = '{}'".format(table_name,steam_replace)
+        sqlQuery = "select * from {} where steam = '{}' limit 1".format(table_name,steam_replace)
         cursorObject.execute(sqlQuery)
         rows = cursorObject.fetchall()
 
@@ -67,5 +67,22 @@ async def stats(ctx, steam_id):
     except:
         embed = discord.Embed(colour=discord.Colour(embed_color), description="**Please input a invalid Steam ID!**")
         await bot.say(embed=embed)
+
+@bot.command(pass_context=True)
+async def top(ctx):
+    counter = 0
+    description = ""
+
+    sqlQuery = "select name, score from {} order by score desc limit 20".format(table_name)
+    cursorObject.execute(sqlQuery)
+    rows = cursorObject.fetchall()
+
+    for row in rows:
+        counter += 1
+        description += "**{}.** {} **|** Score: {}\n".format(counter, row["name"], row["score"])
+
+    embed = discord.Embed(title="**Top 20 Players**", colour=discord.Colour(embed_color), description="{}".format(description))
+    await bot.say(embed=embed)
+
 
 bot.run(bot_token)
