@@ -28,8 +28,6 @@ embed_color = 0xE8CA11   #Do not remove 0x  || Message Color. Hex, 6 characters.
 cusrorType = pymysql.cursors.DictCursor
 connectionObject = pymysql.connect(host=db_ip, user=db_user, password=db_pass, db=db_name, charset=charSet,cursorclass=cusrorType,autocommit=True)
 
-cursorObject = connectionObject.cursor()
-
 bot = commands.Bot(command_prefix=set_prefix)
 
 @bot.event
@@ -39,6 +37,8 @@ async def on_ready():
 @bot.command(pass_context=True)
 async def stats(ctx, steam_id):
     try:
+        cursorObject = connectionObject.cursor()
+
         r = requests.get('https://steamid.eu/api/convert.php?api={}&input={}&format=json'.format(steamid_api,steam_id))
         data =r.json()
         converter = data["converted"]
@@ -47,7 +47,7 @@ async def stats(ctx, steam_id):
 
         steam_replace = steam_replace[:7].replace('0', '1') + steam_replace[7:]
 
-        sqlQuery = "select * from {} where steam = '{}' limit 1".format(table_name,steam_replace)
+        sqlQuery = "select rounds_tr, rounds_ct, kills, deaths, hits, shots, headshots, name, score from {} where steam = '{}' limit 1".format(table_name,steam_replace)
         cursorObject.execute(sqlQuery)
         rows = cursorObject.fetchall()
 
@@ -64,12 +64,16 @@ async def stats(ctx, steam_id):
 
             embed = discord.Embed(title="**Rankme statistics for {}**".format(row["name"]), colour=discord.Colour(embed_color), description="\n**Score:** {}\n**KDR:** {}\n**Hits Percentage:** {}%\n**Headshot Percentage:** {}%\n**Kills:** {}\n**Deaths:** {}\n**Shots:** {}\n**Hits:** {}\n**Total Rounds Played:** {}".format(row["score"],kdr_roundup,hit_roundup,headshot_roundup,row["kills"],row["deaths"],row["shots"],row["hits"],total_rounds))
             await bot.say(embed=embed)
+        
+        cursorObject.close()
     except:
         embed = discord.Embed(colour=discord.Colour(embed_color), description="**Please input a invalid Steam ID!**")
         await bot.say(embed=embed)
 
 @bot.command(pass_context=True)
 async def top(ctx):
+    cursorObject = connectionObject.cursor()
+
     counter = 0
     description = ""
 
@@ -83,6 +87,8 @@ async def top(ctx):
 
     embed = discord.Embed(title="**Top 20 Players**", colour=discord.Colour(embed_color), description="{}".format(description))
     await bot.say(embed=embed)
+
+    cursorObject.close()
 
 
 bot.run(bot_token)
