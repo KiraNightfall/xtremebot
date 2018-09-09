@@ -25,9 +25,6 @@ set_prefix = '!' #Sets command prefix.
 embed_color = 0xE8CA11   #Do not remove 0x  || Message Color. Hex, 6 characters. Do NOT include # | Helpful link https://htmlcolorcodes.com/color-picker/
 ###################################################################################################################################################################
 
-cusrorType = pymysql.cursors.DictCursor
-connectionObject = pymysql.connect(host=db_ip, user=db_user, password=db_pass, db=db_name, charset=charSet,cursorclass=cusrorType,autocommit=True)
-
 bot = commands.Bot(command_prefix=set_prefix)
 
 @bot.event
@@ -37,6 +34,9 @@ async def on_ready():
 @bot.command(pass_context=True)
 async def stats(ctx, steam_id):
     try:
+        cusrorType = pymysql.cursors.DictCursor
+        connectionObject = pymysql.connect(host=db_ip, user=db_user, password=db_pass, db=db_name, charset=charSet,cursorclass=cusrorType,autocommit=True)
+
         cursorObject = connectionObject.cursor()
 
         r = requests.get('https://steamid.eu/api/convert.php?api={}&input={}&format=json'.format(steamid_api,steam_id))
@@ -72,6 +72,9 @@ async def stats(ctx, steam_id):
 
 @bot.command(pass_context=True)
 async def top(ctx):
+    cusrorType = pymysql.cursors.DictCursor
+    connectionObject = pymysql.connect(host=db_ip, user=db_user, password=db_pass, db=db_name, charset=charSet,cursorclass=cusrorType,autocommit=True)
+    
     cursorObject = connectionObject.cursor()
 
     counter = 0
