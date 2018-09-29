@@ -14,9 +14,9 @@ Uses [SteamID.eu API](https://steamid.eu/steamidapi/) for convecting steam IDs i
 - web server
 
 # Commands
-!stats steamid
+- !stats steamid
 
-!top
+- !top
 
 # Preview
 ![RankMe discord stats](https://image.ibb.co/c2CXUT/8d1e48333489c2650e85f24a403f0269.png)
